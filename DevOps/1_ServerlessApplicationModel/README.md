@@ -1,8 +1,8 @@
+![Meet SAM](images/aws_sam_introduction.png)
+
 # Module 1: Serverless Application Model
 
 In this module you'll learn about the [Serverless Application Model (SAM)](https://github.com/awslabs/serverless-application-model) and how you can use it to define a serverless RESTful API.  You will also use [SAM Local](http://docs.aws.amazon.com/lambda/latest/dg/test-sam-local.html) to locally develop and rapidly test an API.
-
-
 
 ## Serverless Application Model (SAM) Overview
 
