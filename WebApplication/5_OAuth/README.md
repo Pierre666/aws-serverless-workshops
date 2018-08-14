@@ -1,4 +1,4 @@
-# Module 5: Enabling 3rd party applications using OAuth 2.0
+# (Optional) Module 5: Enabling 3rd party applications using OAuth 2.0
 
 In this module we will turn our Wild Rydes application into a platform, enabling third party developers to build new applications on top of our APIs. Working with third party developers makes it easier for us to open new markets and geographies as well as provide new functionality for our riders.
 
