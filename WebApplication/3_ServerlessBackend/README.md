@@ -8,8 +8,6 @@ You'll implement a Lambda function that will be invoked each time a user request
 
 The function is invoked from the browser using Amazon API Gateway. You'll implement that connection in the next module. For this module you'll just test your function in isolation.
 
-If you want to skip ahead to the next module, you can **launch the stack from [module 4 (RESTful APIs)](../4_RESTfulAPIs)**.
-
 ## Implementation Instructions
 
 Each of the following sections provide an implementation overview and detailed, step-by-step instructions. The overview should provide enough context for you to complete the implementation if you're already familiar with the AWS Management Console or you want to explore the services yourself without following a walkthrough.
@@ -25,7 +23,7 @@ After you've created the table, note the ARN for use in the next step.
 <details>
 <summary><strong>Step-by-step instructions (expand for details)</strong></summary><p>
 
-1. From the AWS Management Console, choose **Services** then select **DynamoDB** under Databases.
+1. From the [AWS Management Console](https://console.aws.amazon.com/console/home), choose **Services** then select **DynamoDB** under Databases.
 
 1. Choose **Create table**.
 
@@ -52,12 +50,12 @@ Every Lambda function has an IAM role associated with it. This role defines what
 
 Use the IAM console to create a new role. Name it `WildRydesLambda` and select AWS Lambda for the role type. You'll need to attach policies that grant your function permissions to write to Amazon CloudWatch Logs and put items to your DynamoDB table.
 
-Attach the managed policy called `AWSLambdaBasicExecutionRole` to this role to grant the necessary CloudWatch Logs permissions. Also, create a custom inline policy for your role that allows the `ddb:PutItem` action for the table you created in the previous section.
+Attach the managed policy called `AWSLambdaBasicExecutionRole` to this role to grant the necessary CloudWatch Logs permissions. Also, create a custom inline policy for your role that allows the `dynamodb:PutItem` and `dynamodb:Scan` action for the table you created in the previous section.
 
 <details>
 <summary><strong>Step-by-step instructions (expand for details)</strong></summary><p>
 
-1. From the AWS Management Console, click on **Services** and then select **IAM** in the Security, Identity & Compliance section.
+1. From the [AWS Management Console](https://console.aws.amazon.com/console/home), click on **Services** and then select **IAM** in the Security, Identity & Compliance section.
 
 1. Select **Roles** in the left navigation bar and then choose **Create new role**.
 
@@ -85,7 +83,7 @@ Attach the managed policy called `AWSLambdaBasicExecutionRole` to this role to g
 
 1. Choose **Select actions**.
 
-1. Begin typing `PutItem` into the search box labeled **Filter actions** and check the box next to **PutItem** when it appears.
+1. Begin typing `PutItem` into the search box labeled **Filter actions** and check the box next to **PutItem** when it appears. Then, type `Scan` and check the box next to **Scan** when it appears.
 
 1. Select the **Resources** section.
 

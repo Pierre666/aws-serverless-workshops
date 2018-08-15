@@ -1,39 +1,14 @@
-# (Optional) Module 5: Enabling 3rd party applications using OAuth 2.0
+# _(Optional)_ Module 5: Enabling 3rd party applications using OAuth 2.0
 
 In this module we will turn our Wild Rydes application into a platform, enabling third party developers to build new applications on top of our APIs. Working with third party developers makes it easier for us to open new markets and geographies as well as provide new functionality for our riders.
 
-You'll configure your Cognito User Pool from module #2 to enable OAuth 2.0 flows. Using OAuth, third party developers can build new client applications on top of your APIs. We will create a new method in the application's API that allows unicorns to list the rides they have given. This will open a new line of business for us, making it easy for third party developers to build applications that help unicorns manage their time and earnings. First, we will create the new method to list rides. Then, we will enable OAuth flows in our Cognito User Pool and deploy a sample client.
+You'll configure your Cognito User Pool from [module 2](../2_UserManagement) to enable OAuth 2.0 flows. Using OAuth, third party developers can build new client applications on top of your APIs. We will create a new method in the application's API that allows unicorns to list the rides they have given. This will open a new line of business for us, making it easy for third party developers to build applications that help unicorns manage their time and earnings. 
+
+First, we will create the new method to list rides. Then, we will enable OAuth flows in our Cognito User Pool and deploy a sample client.
 
 ![OAuth 2.0 3rd party app architecture](../images/oauth-architecture.png)
 
 The diagram above shows how the component of the new third party application interact with our current Wild Rydes architecture. The web application is deployed in an S3 bucket. The application uses the Cognito User Pools built-in UI to start an implicit grant OAuth 2.0 flow and authenticate the user. Once the Unicorn user is authenticated, the client application receives an identity and access token for the Unicorn. Tokens for Unicorns include an additional `Unicorn` claim that gives them access to the new API. In API Gateway, a custom authorizer checks for the `Unicorn` claim in the JWT access token produced by Cognito and passes the unicorn name to the backend Lambda function. The backend Lambda function uses the unicorn name from the access token to query the rides table in DynamoDB.
-
-### Prerequisites
-
-This module depends on all of the previous four modules in the Wild Rydes workshop. To make it easier to get started, we have prepared a CloudFormation template that can launch the complete stack for you. If you have skipped the earlier modules, and deploying using the CloudFormation template, clone the aws-serverless-workshop repository to your local working environment.
-
-If you have previously created resources from modules #1 to #4 in your account, and would still like to start fresh with the CloudFormation template below, make sure you first follow the [cleanup steps](../9_CleanUp/).
-
-Region| Launch
-------|-----
-US East (N. Virginia) | [![Launch Modules 1, 2, 3, and 4 in us-east-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-us-east-1/WebApplication/5_OAuth/prerequisites.yaml)
-US East (Ohio) | [![Launch Modules 1, 2, 3, and 4 in us-east-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-us-east-2/WebApplication/5_OAuth/prerequisites.yaml)
-US West (Oregon) | [![Launch Modules 1, 2, 3, and 4 in us-west-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-us-west-2/WebApplication/5_OAuth/prerequisites.yaml)
-EU (Frankfurt) | [![Launch Modules 1, 2, 3, and 4 in eu-central-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-eu-central-1/WebApplication/5_OAuth/prerequisites.yaml)
-EU (Ireland) | [![Launch Modules 1, 2, 3, and 4 in eu-west-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-eu-west-1/WebApplication/5_OAuth/prerequisites.yaml)
-EU (London) | [![Launch Modules 1, 2, 3, and 4 in eu-west-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-2#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-eu-west-2/WebApplication/5_OAuth/prerequisites.yaml)
-Asia Pacific (Tokyo) | [![Launch Modules 1, 2, 3, and 4 in ap-northeast-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-northeast-1#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-ap-northeast-1/WebApplication/5_OAuth/prerequisites.yaml)
-Asia Pacific (Seoul) | [![Launch Modules 1, 2, 3, and 4 in ap-northeast-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-northeast-2#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-ap-northeast-2/WebApplication/5_OAuth/prerequisites.yaml)
-Asia Pacific (Sydney) | [![Launch Modules 1, 2, 3, and 4 in ap-southeast-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-ap-southeast-2/WebApplication/5_OAuth/prerequisites.yaml)
-Asia Pacific (Mumbai) | [![Launch Modules 1, 2, 3, and 4 in ap-south-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-south-1#/stacks/new?stackName=wildrydes-webapp&templateURL=https://s3.amazonaws.com/wildrydes-ap-south-1/WebApplication/5_OAuth/prerequisites.yaml)
-
-The stack creation process will ask you for a **Website Bucket Name**, specify a unique name for your bucket such as **wildrydes-webapp-&lt;username&gt;**.
-
-#### Populate the rides database
-After the stack created successfully, open the **Outputs** tab in the CloudFormation console. Copy the **WebsiteURL** output value and navigate to the page with a browser window.
-
-On the Wild Rydes website, click the **Giddy Up!** button and register a new user. Once you have received your verification code, navigate to the **verify.html** page of the website to submit your code. From the login page, use your new credentials to log into the website. Use the application to request a few unicorn rides, we will need the rides data later in this module.
-
 
 ### 1. Create the new List Rides Lambda function
 
@@ -45,7 +20,7 @@ Take a look at the code in the [listUnicornRides.js](./listUnicornRides.js) file
 #### High-Level Instructions
 Use the AWS Lambda console to create a new Lambda function called **ListUnicornRides** that will process the API requests. Use the provided [listUnicornRides.js](./listUnicornRides.js?raw=1) example implementation for your function code. Just copy and paste from that file into the AWS Lambda console's editor.
 
-Make sure to configure your function to use the `WildRydesLambda` IAM role you created in module 2 of this workshop.
+Make sure to configure your function to use the `WildRydesLambda` IAM role you created in [module 3](../3_ServerlessBackend) of this workshop.
 
 <details>
 <summary><strong>Step-by-step instructions (expand for details)</strong></summary><p>
@@ -84,7 +59,7 @@ Amazon API Gateway can leverage an AWS Lambda function to make authorization dec
 You can also return a set of key/value pairs that are appended to the request context values. The code for our custom authorizer is in the `ListUnicornAuthorizer` folder, open the folder and take a look at the `index.js` file to get an idea of how our custom authorizer works. To authorize access to our new list rides API we rely on a custom scope called `UnicornManager/unicorn` - this scope is automatically added to client tokens produced by the Unicorn Manager application.
 
 #### High-Level Instructions
-Use the AWS Lambda console to create a new Lambda function called **ListUnicornAuthorizer** that will process incoming JWT bearer tokens. Upload the provided [ListUnicornAuthorizer.zip](./ListUnicornAuthorizer.zip) as the function code. The authorizer Lambda function relies on an environment variable called **`USER_POOL_ID`**, define this in the Lambda console and set the value of the WildRydes **Pool Id** from the Cognito console.
+Use the AWS Lambda console to create a new Lambda function called **ListUnicornAuthorizer** that will process incoming JWT bearer tokens. Upload the provided [ListUnicornAuthorizer.zip](./ListUnicornAuthorizer.zip) as the function code. The authorizer Lambda function relies on an environment variable called `USER_POOL_ID`, define this in the Lambda console and set the value of the WildRydes **Pool Id** from the Cognito console.
 
 Make sure to configure your function to use the **WildRydesLambda** IAM role you created in module 2 of this workshop.
 
@@ -201,7 +176,7 @@ In the API Gateway console, open the `WildRydes` API we created in module #4 and
 #### Background
 Our new partner website, called Unicorn Manager, is also a static application hosted on Amazon S3. You can define who can access the content in your S3 buckets using a bucket policy. Bucket policies are JSON documents that specify what principals are allowed to execute various actions against the objects in your bucket.
 
-By default objects in an S3 bucket are available via URLs with the structure http://&lt;Regional-S3-prefix&gt;.amazonaws.com/<bucket-name>/<object-key>. In order to serve assets from the root URL (e.g. /index.html), you'll need to enable website hosting on the bucket. This will make your objects available at the AWS Region-specific website endpoint of the bucket: <bucket-name>.s3-website-<AWS-region>.amazonaws.com
+By default objects in an S3 bucket are available via URLs with the structure `http://{regional-s3-prefix}.amazonaws.com/{bucket-name}/{object-key}`. In order to serve assets from the root URL (e.g. `/index.html`), you'll need to enable website hosting on the bucket. This will make your objects available at the AWS region-specific website endpoint of the bucket: `{bucket-name}.s3-website-{aws-region}.amazonaws.com`
 
 Because our application interacts with Cognito via the OAuth 2.0 implicit flow, which requires a redirect, we need our website to use HTTPS. To have an HTTPS endpoint for an S3 static website, we can use a [CloudFront distribution](https://aws.amazon.com/cloudfront/).
 
@@ -217,7 +192,7 @@ Using the CloudFront console, create a new Distribution for web content specifyi
 <details>
 <summary><strong>Step-by-step instructions (expand for details)</strong></summary><p>
 
-1. In the AWS Management Console choose **Services** then select **S3** under Storage.
+1. In the [AWS Management Console](https://console.aws.amazon.com/console/home) choose **Services** then select **S3** under Storage.
 
 1. Choose **+ Create Bucket**
 
@@ -233,7 +208,7 @@ Using the CloudFront console, create a new Distribution for web content specifyi
 
 1. Choose the **Permissions** tab, then click the **Bucket Policy** button.
 
-1. Enter the following policy document into the bucket policy editor replacing `[YOUR_BUCKET_NAME]` with the name of the bucket you created in section 1:
+1. Enter the following policy document into the bucket policy editor replacing `{your-bucket-name}` with the name of the bucket you created in section 1:
 
     ```json
     {
@@ -243,7 +218,7 @@ Using the CloudFront console, create a new Distribution for web content specifyi
                 "Effect": "Allow",
                 "Principal": "*",
                 "Action": "s3:GetObject",
-                "Resource": "arn:aws:s3:::[YOUR_BUCKET_NAME]/*"
+                "Resource": "arn:aws:s3:::{your-bucket-name}/*"
             }
         ]
     }
@@ -271,7 +246,7 @@ Using the CloudFront console, create a new Distribution for web content specifyi
 
 1. For the delivery method, under **Web** section, click **Get Started**.
 
-1. In the **Origin Domain Name** field, paste the URL for the S3 static website we just created and **/** as the origin path. **Do not select the bucket from dropdown list, paste the full website url including the http:// prefix. The origin type should be `custom`, not `s3`**.
+1. In the **Origin Domain Name** field, paste the URL for the S3 static website we just created and `/` as the origin path. **Do not select the bucket from dropdown list, paste the full website url including the http:// prefix. The origin type should be `custom`, not `s3`**.
 
 1. In the **Viewer Protocol Policy** make sure that **Redirect HTTP to HTTPS** is selected.
 
@@ -291,7 +266,7 @@ Using the CloudFront console, create a new Distribution for web content specifyi
 Amazon Cognito User Pools allows you to declare multiple client applications that can interact with your pool. This includes both applications you own and apps by third party developers. Each application is identified by an application id and client secret. Cognito User Pools also offers a hosted login UI that supports the most common user operations such as registration, login, reset passwords, and MFA. You can also customize the look and feel of the hosted UI.
 
 #### High-Level Instructions
-Using the Cognito console, add a new client application called **UnicornManager**. Because the client application is a static website hosted on S3 and written in JavaScript, we do **not** need a client secret. Next, in the App Integration section of the Cognito console, configure a domain name prefix for your hosted login UI. We called this **WildRydes-&lt;username&gt;**.
+Using the Cognito console, add a new client application called **UnicornManager**. Because the client application is a static website hosted on S3 and written in JavaScript, we do **not** need a client secret. Next, in the App Integration section of the Cognito console, configure a domain name prefix for your hosted login UI. We called this `WildRydes-{username}`.
 
 <details>
 <summary><strong>Step-by-step instructions (expand for details)</strong></summary><p>
@@ -312,7 +287,7 @@ Using the Cognito console, add a new client application called **UnicornManager*
 
 1. Open the **Domain name** configuration page.
 
-1. Specify a unique custom domain name, for example **wildrydes-sapessi**.
+1. Specify a unique custom domain name, for example `wildrydes-{username}`.
 
 1. Make sure that the domain name is available and then click **Save changes**.
 </p></details>
@@ -403,15 +378,16 @@ Upload the content of the **UnicornManager** folder to the root of your S3 bucke
 
 1. Using your preferred text editor, open the **config.js** file.
 
-1. From the Cognito User Pools console, copy the client app id for the **UnicornManager** application as the value of the **userPoolClientId** property. You can find the application id in the **App clients** menu of the Cognito console.
+1. From the Cognito User Pools console, copy the client app id for the `UnicornManager` application as the value of the `userPoolClientId` property. You can find the application id in the `App clients` menu of the Cognito console.
 
-1. Change the value of the **region** property to the region you are using for this workshop. For example, I'm using **us-east-2**.
+1. Change the value of the `region` property to the region you are using for this workshop. For example, `us-east-2`.
 
-1. Still in the Cognito User Pools console, open the **Domain name** page and copy the custom prefix in the value for the **authDomainPrefix** property. In our sample, this was `wildrydes-sapessi`.
+1. Still in the Cognito User Pools console, open the `Domain name` page and copy the custom prefix in the value for the `authDomainPrefix` property. In our sample, this was `wildrydes-{username}`.
 
-1. Finally, open the CloudFormation console and select the pre-requisites stack we created at the beginning of this lab. With the stack selected, use the bottom section of the window to open the **Outputs** tab. Copy the value of the **WildRydesApiInvokeUrl** output variable to the **invokeUrl** property - this value should look like this: `https://xxxxxxxxx.execute-api.xx-xxxxx-x.amazonaws.com/prod`
+1. Finally, get the API Gateway you had created during [module 4](../4_RESTfulAPIs). The endpoint would be like the following: `https://xxxxxxxxx.execute-api.xx-xxxxx-x.amazonaws.com/prod`
 
-1. Next, we need to copy the files we just modified to the S3 bucket that hosts our static website. We created the bucket in step #5 of this lab and it should be called **unicornmanager-&lt;username&gt;**. You can use the AWS CLI or the management console with a compatible browser to upload the files.
+1. Next, we need to copy the files we just modified to the S3 bucket that hosts our static website. We created the bucket in step #5 of this lab and it should be called `unicornmanager-username`. You can use the AWS CLI or the AWS Management Console with a compatible browser to upload the files.
+
 ##### AWS CLI
 
 1. With a terminal, navigate to the **UnicornManager** directory in the lab material folder.
@@ -419,7 +395,7 @@ Upload the content of the **UnicornManager** folder to the root of your S3 bucke
 1. Run the following command:
 
     ```
-    aws s3 sync . s3://YOUR_BUCKET_NAME --region YOUR_BUCKET_REGION
+    aws s3 sync . s3://{your-bucket-name} --region {your-bucket-region} --profile {your-profile-name}
     ```
 ##### AWS Console
 
@@ -428,6 +404,7 @@ Upload the content of the **UnicornManager** folder to the root of your S3 bucke
 1. In the **Overview** tab, click the **Upload** button.
 
 1. From a file browser window, select all of the files in the **UnicornManager** folder and drag them to S3's upload window.
+
 </p></details>
 
 ### Testing the application

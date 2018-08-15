@@ -6,71 +6,28 @@ In this module you'll use API Gateway to expose the Lambda function you built in
 
 The diagram above shows how the API Gateway component you will build in this module integrates with the existing components you built previously. The grayed out items are pieces you have already implemented in previous steps.
 
-The static website you deployed in the first module already has a page configured to interact with the API you'll build in this module. The page at /ride.html has a simple map-based interface for requesting a unicorn ride. After authenticating using the /signin.html page, your users will be able to select their pickup location by clicking a point on the map and then requesting a ride by choosing the "Request Unicorn" button in the upper right corner.
+The static website you deployed in the first module already has a page configured to interact with the API you'll build in this module. The page at `/ride.html` has a simple map-based interface for requesting a unicorn ride. After authenticating using the `/signin.html` page, your users will be able to select their pickup location by clicking a point on the map and then requesting a ride by choosing the `Request Unicorn` button in the upper right corner.
 
 This module will focus on the steps required to build the cloud components of the API, but if you're interested in how the browser code works that calls this API, you can inspect the [ride.js](../1_StaticWebHosting/website/js/ride.js) file of the website. In this case the application uses jQuery's [ajax()](https://api.jquery.com/jQuery.ajax/) method to make the remote request.
-
-If you want to skip ahead to the next module, you can launch one of these AWS CloudFormation templates in the Region of your choice in order to build the necessary resources automatically.
-
-Region| Launch
-------|-----
-US East (N. Virginia) | [![Launch Module 4 in us-east-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-us-east-1/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-US East (Ohio) | [![Launch Module 4 in us-east-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-us-east-2/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-US West (Oregon) | [![Launch Module 4 in us-west-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-us-west-2/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-EU (Frankfurt) | [![Launch Module 4 in eu-central-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-eu-central-1/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-EU (Ireland) | [![Launch Module 4 in eu-west-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-eu-west-1/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-EU (London) | [![Launch Module 4 in eu-west-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-2#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-eu-west-2/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-Asia Pacific (Tokyo) | [![Launch Module 4 in ap-northeast-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-northeast-1#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-ap-northeast-1/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-Asia Pacific (Seoul) | [![Launch Module 4 in ap-northeast-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-northeast-2#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-ap-northeast-2/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-Asia Pacific (Sydney) | [![Launch Module 4 in ap-southeast-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-ap-southeast-2/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-Asia Pacific (Mumbai) | [![Launch Module 4 in ap-south-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-south-1#/stacks/new?stackName=wildrydes-webapp-4&templateURL=https://s3.amazonaws.com/wildrydes-ap-south-1/WebApplication/4_RESTfulAPIs/backend-api.yaml)
-
-<details>
-<summary><strong>CloudFormation Launch Instructions (expand for details)</strong></summary><p>
-
-1. Click the **Launch Stack** link above for the region of your choice.
-
-1. Click **Next** on the Select Template page.
-
-1. Provide the name of your website bucket from module 1 for the  **Website Bucket Name** (e.g. `wildrydes-yourname`) and choose **Next**.
-
-    **Note:** You must specify the same bucket name you used in the previous module. If you provide a bucket name that does not exist or that you do not have write access to, the CloudFormation stack will fail during creation.
-
-1. Provide the ARN for the User Pool we created in module 2. You can find the User Pool ARN in the [Amazon Cognito console](https://console.aws.amazon.com/cognito/users/).
-
-1. On the Options page, leave all the defaults and click **Next**.
-
-1. On the Review page, check the box to acknowledge that CloudFormation will create IAM resources and click **Create**.
-    ![Acknowledge IAM Screenshot](../images/cfn-ack-iam.png)
-
-    This template uses a custom resource to update the `/js/config.js` file with the new API endpoint URL
-
-1. Wait for the `wildrydes-webapp-4` stack to reach a status of `CREATE_COMPLETE`.
-
-1. Verify the Wild Rydes home page is loading properly and try to request a ride.
-
-</p></details>
-
-## Implementation Instructions
 
 Each of the following sections provides an implementation overview and detailed, step-by-step instructions. The overview should provide enough context for you to complete the implementation if you're already familiar with the AWS Management Console or you want to explore the services yourself without following a walkthrough.
 
 If you're using the latest version of the Chrome, Firefox, or Safari web browsers the step-by-step instructions won't be visible until you expand the section.
 
-### 1. Create a New REST API
+## 1. Create a New REST API
 Use the Amazon API Gateway console to create a new API.
 
 <details>
 <summary><strong>Step-by-step instructions (expand for details)</strong></summary><p>
 
-1. In the AWS Management Console, click **Services** then select **API Gateway** under Networking & Content Delivery.
+1. In the [AWS Management Console](https://console.aws.amazon.com/console/home), click **Services** then select **API Gateway** under Networking & Content Delivery.
 
 1. Choose **Create API**.
 
 1. Select **New API** and enter `WildRydes` for the **API Name**.
 
 1. Keep `Edge optimized` selected in the **Endpoint Type** dropdown.
-    ***Note***: Edge optimized are best for public services being accessed from the Internet. Regional endpoints are typically used for APIs that are accessed primarily from within the same AWS Region.
+    ***Note***: Edge optimized are best for public services being accessed from the Internet. Regional endpoints are typically used for APIs that are accessed primarily from within the same AWS Region or if you need fine-grained control on your own CloudFront distribution that would serve your API to end users, [like adding AWS WAF](https://aws.amazon.com/blogs/compute/protecting-your-api-using-amazon-api-gateway-and-aws-waf-part-i/).
 
 1. Choose **Create API**
 
@@ -110,6 +67,8 @@ In the Amazon API Gateway console, create a new Cognito user pool authorizer for
 
 #### Verify your authorizer configuration
 
+> Remember your previously created S3 Static Website Hosting URL: `http://{your-bucket-name}.s3-website-{aws-region}.amazonaws.com`
+
 1. Open a new browser tab and visit `/ride.html` under your website's domain.
 
 1. If you are redirected to the sign-in page, sign in with the user you created in the last module. You will be redirected back to `/ride.html`.
@@ -124,7 +83,23 @@ In the Amazon API Gateway console, create a new Cognito user pool authorizer for
 
     ![Test Authorizer screenshot](../images/apigateway-test-authorizer.png)
 
-1. Click **Test** button and verify that the response code is 200 and that you see the claims for your user displayed.
+1. Click **Test** button and verify that the response code is 200 and that you see the claims for your user displayed, like the following:
+
+```json
+{
+  "aud": "5433c54bv5i26poklacg0vd941",
+  "auth_time": "1534365147",
+  "cognito:username": "{username-at-domain}",
+  "email": "{your-email-address}",
+  "email_verified": "true",
+  "event_id": "52e3f917-a0ca-11e8-a2ad-0f0656a630fe",
+  "exp": "Wed Aug 15 21:32:27 UTC 2018",
+  "iat": "Wed Aug 15 20:32:27 UTC 2018",
+  "iss": "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_Z8xabHriB",
+  "sub": "42149016-dd66-4335-953b-6e06060895a6",
+  "token_use": "id"
+}
+```
 
 </p></details>
 
@@ -172,7 +147,7 @@ Create a new resource called /ride within your API. Then create a POST method fo
 
 1. Choose the pencil icon next to **Authorization**.
 
-1. Select the WildRydes Cognito user pool authorizer from the drop-down list, and click the checkmark icon.
+1. Select the `WildRydes` Cognito user pool authorizer from the drop-down list, and click the checkmark icon.
 
     ![API authorizer configuration screenshot](../images/api-authorizer.png)
 
@@ -251,6 +226,8 @@ If you completed module 2 manually, you can edit the `config.js` file you have s
 
 1. Choose **Request Unicorn**. You should see a notification in the right sidebar that a unicorn is on its way and then see a unicorn icon fly to your pickup location.
 
-Congratulations, you have completed the Wild Rydes Web Application Workshop! Check out our [other workshops](../../README.md#workshops) covering additional serverless use cases.
+## Congratulations!
 
-See this workshop's [cleanup guide](../9_CleanUp) for instructions on how to delete the resources you've created.
+You have completed the Wild Rydes Web Application Workshop 🦄
+
+If you want to go deeper on OAuth support provided by Amazon Cognito, feel free to walk-through the (optional) [OAuth hands-on lab](../5_OAuth)

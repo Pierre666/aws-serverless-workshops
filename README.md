@@ -10,7 +10,7 @@ If you're new to serverless, please refer to [Serverless Computing on AWS](https
 
 To get hands dirty, we'll need to make sure to have all the environment tooling required for theses hands-labs are installed on your computer.
 
-> This workshop assumes you're using your local computer to walk-through hands-on labs. If you prefer you can [spin up your own IDE in the cloud, using AWS Cloud9](DevOps/0_Cloud9). And **skip this warm-up section**.
+> This workshop assumes you're using your local computer to walk-through the hands-on labs. If you prefer you can [spin up your own IDE in the cloud, using AWS Cloud9](DevOps/0_Cloud9). And **skip this warm-up section**.
 
 1. Install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/installing.html)
 
