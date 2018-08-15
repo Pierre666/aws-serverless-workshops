@@ -1,8 +1,8 @@
 # Module: Coordinate a serverless image processing workflow with AWS Step Functions
 
-In this module you'll use AWS Step Functions to build an image processing workflow by orchestrating multiple AWS Lambda functions. 
+In this module you'll use AWS Step Functions to build an image processing workflow by orchestrating multiple AWS Lambda functions.
 
-The Wild Rydes team wants to add a new feature to the app by requiring riders to upload a selfie after signing up. This accomplishes a few things: 
+The Wild Rydes team wants to add a new feature to the app by requiring riders to upload a selfie after signing up. This accomplishes a few things:
 
 1. Allows the unicorns to easily identify the rider during pickup to provide a good customer experience. This also enhances security so bad guys can't spoof to be riders and get on the unicorns. 
 1. Prevents the same user from signing up for multiple accounts to abuse new-user promotions.  
@@ -17,7 +17,8 @@ When users upload the photo of themselves, a few steps of verification and proce
 1. Index the user's face into the collection so it can be used for matching in the future. 
 1. Store the photo metadata with the user's profile.  
 
-In the serverless world, each of steps above can be easily implemented with a AWS Lambda function. But how can we manage the flow of invoking one Lambda function after the previous step has finished and keep track of what happened with each image? What if one of the Lambda function times out and needs to be retried? Some of the Lambda functions can be run in parallel to reduce end-to-end processing latency, how can we coordinate running Lambda functions in parallel and wait for them to finish? AWS Step Functions makes it very easy to solve these problems and provides an audit trail and visualization to track what happened with each flow. 
+In the serverless world, each of steps above can be easily implemented with a AWS Lambda function. But how can we manage the flow of invoking one Lambda function after the previous step has finished and keep track of what happened with each image? What if one of the Lambda function times out and needs to be retried? Some of the Lambda functions can be run in parallel to reduce end-to-end processing latency, how can we coordinate running Lambda functions in parallel and wait for them to finish? AWS Step Functions makes it very easy to solve these problems and provides an audit trail and visualization to track what happened with each flow. 
+
 ## Architecture Overview
 The architecture for this module is composed of several AWS Lambda functions that leverage the facial detection capabilities of **Amazon Rekognition**, resize the uploaded image stored in **Amazon S3**, and save the image metadata with the user profile using **Amazon DynamoDB**. The orchestration of these Lambda functions is managed by an **AWS Step Functions**  state machine.
 
@@ -27,7 +28,8 @@ Below is the flow diagram of the workflow we will build as visualized by  **AWS 
 
 <img src="./images/4th-state-machine-graph.png" width="60%">
 
-In this module, we will manually kick-off processing workflows from the AWS Step Functions management console. In a real world application, you can configure an Amazon API Gateway that your application invokes to trigger the Step Functions state machine, or have it triggered by an Amazon S3 upload event through Amazon CloudWatch Events or S3 event notifications. 
+In this module, we will manually kick-off processing workflows from the AWS Step Functions management console. In a real world application, you can configure an Amazon API Gateway that your application invokes to trigger the Step Functions state machine, or have it triggered by an Amazon S3 upload event through Amazon CloudWatch Events or S3 event notifications. 
+
 ## Implementation Instructions
 
 Each of the following sections provide an implementation overview and detailed, step-by-step instructions. The overview should provide enough context for you to complete the implementation if you're already familiar with the AWS Management Console or you want to explore the services yourself without following a walkthrough.
@@ -46,31 +48,31 @@ Using the AWS Command Line Interface, create a collection in the Amazon Rekognit
 <details>
 <summary><strong>Step-by-step instructions (expand for details)</strong></summary><p>
 
-1. In a terminal window, run the following command and replace the `REPLACE_WITH_YOUR_CHOSEN_AWS_REGION` portion with the region string of your chosen region. (see [Rekognition regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#rekognition_region))
+1. In a terminal window, run the following command and replace the `{aws-region}` portion with the region string of your chosen region. (see [Rekognition regions](http://docs.aws.amazon.com/general/latest/gr/rande.html#rekognition_region))
 
-		aws rekognition create-collection --region REPLACE_WITH_YOUR_CHOSEN_AWS_REGION --collection-id rider-photos
+	`aws rekognition create-collection --region {aws-region} --collection-id rider-photos`
 	
 	For example:
 	
-		aws rekognition create-collection --region us-east-1 --collection-id rider-photos
-		aws rekognition create-collection --region us-west-2 --collection-id rider-photos
-		aws rekognition create-collection --region eu-west-1 --collection-id rider-photos
-	
-	
+	`aws rekognition create-collection --region us-east-1 --collection-id rider-photos`
+
 2. If successful, you should get an acknowledgment from the service that looks like:
 
-	```JSON
+	```json
 	{
-    	"CollectionArn": "aws:rekognition:us-west-2:012345678912:collection/rider-photos",
-    	"StatusCode": 200
+		"StatusCode": 200,
+		"CollectionArn": "aws:rekognition:us-east-2:917451663391:collection/rider-photos",
+		"FaceModelVersion": "3.0"
 	}
 	```
 </p></details>
 
 ### 2. Deploy Amazon S3, AWS Lambda and Amazon DynamoDB resources using AWS CloudFormation
 
-The following AWS CloudFormation template will create these resources:
-* Two Amazon S3 buckets: 	* **RiderPhotoS3Bucket** stores the photos uploaded by the riders
+The following AWS CloudFormation template will create these resources:
+
+* Two Amazon S3 buckets: 
+	* **RiderPhotoS3Bucket** stores the photos uploaded by the riders
 	* A few test images will be copied into the **RiderPhotoS3Bucket**  bucket
 	* **ThumbnailS3Bucket** stores the resized thumbnails of the rider photos
 * One Amazon DynamoDB table **RiderPhotoDDBTable** that stores the metadata of the rider's photo with rider's profile
@@ -100,7 +102,7 @@ Sydney | <span style="font-family:'Courier';">ap-southeast-2</span> | [![Launch 
 
 1. On the Options page, leave all the defaults and click **Next**.
 
-1. On the Review page, Click the checkboxes to give AWS CloudFormation permission to **"create IAM resources"** and **"create IAM resources with custom names"**
+1. On the Review page, Click the checkboxes to give AWS CloudFormation permission to `create IAM resources` and `create IAM resources with custom names`
 
 1. Click **"Create Change Set"** in the Transforms section
 
@@ -108,12 +110,11 @@ Sydney | <span style="font-family:'Courier';">ap-southeast-2</span> | [![Launch 
 
 1. Wait for the `wildrydes-step-module-resources` stack to reach a status of `CREATE_COMPLETE`.
 
-1. With the `wildrydes-step-module-resources` stack selected, click on the **Outputs** tab. These resources will be referenced in the later steps. 
+1. With the `wildrydes-step-module-resources` stack selected, click on the **Outputs** tab. These resources will be referenced in the later steps.
 
 </p></details>
 
-> You may copy & paste the contents of the **Outputs** tab of the CloudFormation stack to a separate text editor for ease of access later. 
-
+> You may copy & paste the contents of the **Outputs** tab of the CloudFormation stack to a separate text editor for ease of access later.
 
 
 ### 3. Create an initial AWS Step Functions state machine
@@ -142,7 +143,7 @@ Now you can create an AWS Step Functions state machine with the initial face det
 	  "States": {
 	    "FaceDetection": {
 	      "Type": "Task",
-	      "Resource": "REPLACE_WITH_FaceDetectionFunctionArn",
+	      "Resource": "{replace-with_FaceDetectionFunctionArn}",
 	      "ResultPath": "$.detectedFaceDetails",
 	      "End": true,
 	      "Catch": [
@@ -157,12 +158,11 @@ Now you can create an AWS Step Functions state machine with the initial face det
 	    },
 	    "PhotoDoesNotMeetRequirement": {
 	      "Type": "Task",
-	      "Resource": "REPLACE_WITH_NotificationPlaceholderFunctionArn",
+	      "Resource": "{replace-with_NotificationPlaceholderFunctionArn}",
 	      "End": true
 	    }
 	  }
 	}
-
 	```
 	
 	The above JSON defines a state machine using the [Amazon States Language](https://states-language.net/spec.html). Take a moment to understand its structure. 
@@ -174,18 +174,15 @@ Now you can create an AWS Step Functions state machine with the initial face det
 	The `Catch` parameter in the `FaceDetection` state can match custom error types thrown by the AWS Lambda function and change the flow of the execution based on the error type caught. 
 
 
-1. Replace the `REPLACE_WITH_FaceDetectionFunctionArn` in the JSON with the ARN of the face detection AWS Lambda function.
+1. Replace the `{replace-with_FaceDetectionFunctionArn}` in the JSON with the ARN of the face detection AWS Lambda function.
 	> To find the ARN of the face detection AWS Lambda function, in the AWS CloudFormation Console, go to the `wildrydes-step-module-resources` stack, look in the **Outputs** section for `FaceDetectionFunctionArn`)
 
-1. Replace the `REPLACE_WITH_NotificationPlaceholderFunctionArn` in the JSON with the ARN of the AWS Lambda function that mocks sending user notifications.
-	> To find the ARN of the mock notification AWS Lambda function, in the AWS CloudFormation Console, go to the `wildrydes-step-module-resources` stack, look in the **Outputs** section for `NotificationPlaceholderFunctionArn`)
- 
+1. Replace the `{replace-with_NotificationPlaceholderFunctionArn}` in the JSON with the ARN of the AWS Lambda function that mocks sending user notifications.
+	> To find the ARN of the mock notification AWS Lambda function, in the AWS CloudFormation Console, go to the `wildrydes-step-module-resources` stack, look in the **Outputs** section for `NotificationPlaceholderFunctionArn`
 
-1. From the AWS Management Console, choose **Services** then select **Step Functions**. 
+1. From the AWS Management Console, choose **Services** then select **Step Functions**.
 
-1. You might see the Get Started page if you have not used AWS Step Functions before. If that's the case, click **Get Started**, it should lead you to the page to create a new state machine. Otherwise, click the **Create a State Machine** button. 
-
-
+1. You might see the Get Started page if you have not used AWS Step Functions before. If that's the case, click **Get Started**, it should lead you to the page to create a new state machine. Otherwise, click the **Create a State Machine** button.
 
 1. Type `RiderPhotoProcessing` for the state machine name.
 
@@ -216,11 +213,10 @@ Now you can create an AWS Step Functions state machine with the initial face det
 	
 	The `userId` field is needed because in later processing steps, the userId is used to record which user the profile picture is associated with.
 
-	
-	```JSON
+	```json
 	{
 	  "userId": "user_a", 
-	  "s3Bucket": "REPLACE_WITH_YOUR_BUCKET_NAME",
+	  "s3Bucket": "{replace-with-your-bucket-name}",
 	  "s3Key": "1_happy_face.jpg"
 	} 
 	```
@@ -234,10 +230,10 @@ Now you can create an AWS Step Functions state machine with the initial face det
 
 1. Create another execution by passing in the s3 key of a photo that wears sunglasses, see how the execution differs:  
 
-	```JSON
+	```json
 	{
 	  "userId": "user_b",
-	  "s3Bucket": "REPLACE_WITH_YOUR_BUCKET_NAME",
+	  "s3Bucket": "{replace-with-your-bucket-name}",
 	  "s3Key": "2_sunglass_face.jpg"
 	} 
 	```
@@ -256,14 +252,12 @@ If the uploaded photo has passed the basic face detection checks, the next step 
 
 1. Edit your `rider-photo-state-machine.json` file to add a new step to the workflow. 
 
-   First, add a new state `CheckFaceDuplicate` following the `PhotoDoesNotMeetRequirement` state. Then, replace the `REPLACE_WITH_FaceSearchFunctionArn` with the `FaceSearchFunctionArn` from the AWS CloudFormation output: 
+   First, add a new state `CheckFaceDuplicate` following the `PhotoDoesNotMeetRequirement` state. Then, replace the `{replace-with_FaceSearchFunctionArn}` with the `FaceSearchFunctionArn` from the AWS CloudFormation output:
 
-
-	```JSON
-	,
+	```json
     "CheckFaceDuplicate": {
       "Type": "Task",
-      "Resource": "REPLACE_WITH_FaceSearchFunctionArn",
+      "Resource": "{replace-with_FaceSearchFunctionArn}",
       "ResultPath": null,
       "End": true,
       "Catch": [
@@ -279,19 +273,17 @@ If the uploaded photo has passed the basic face detection checks, the next step 
 	```
 1. Find the line in the `FaceDetection` state that marks it as the End state of the state machine
 
-	```JSON
-	     	 "End": true,
-
+	```json
+	    "End": true,
 	```
 	and replace it with
 	
-	```JSON
-      		"Next": "CheckFaceDuplicate",
-
+	```json
+      "Next": "CheckFaceDuplicate",
 	```
 	This tells AWS Step Functions if the  `FaceDetection` state runs successfully, go on to run the `CheckFaceDuplicate` state as the next step in the process. 
 
-1. At this point, your `rider-photo-state-machine.json` file should look like this (the AWS Lambda ARNs are examples): 
+1. At this point, your `rider-photo-state-machine.json` file should look like this (**the AWS Lambda ARNs are examples**): 
 	<details>
 	<summary><strong>(expand to see)</strong></summary><p>
 
@@ -351,10 +343,10 @@ If the uploaded photo has passed the basic face detection checks, the next step 
 	
 1. Test the new state machine with the test input you've used before:
 
-	```JSON
+	```json
 	{
 	  "userId": "user_a",
-	  "s3Bucket": "REPLACE_WITH_YOUR_BUCKET_NAME",
+	  "s3Bucket": "{replace-with-your-bucket-name}",
 	  "s3Key": "1_happy_face.jpg"
 	} 
 	```
@@ -377,11 +369,10 @@ The ARNs of the two AWS Lambda functions that performs face index and generate t
 
    First, add a new state `ParallelProcessing` following the `CheckFaceDuplicate` state. Also make sure:
    
-   *   Replace the `REPLACE_WITH_IndexFaceFunctionArn` with the `IndexFaceFunctionArn` from the AWS CloudFormation output.
-   *   Replace the `REPLACE_WITH_ThumbnailFunctionArn` with the `ThumbnailFunctionArn` from the AWS CloudFormation output. 
+   *   Replace the `{replace-with_IndexFaceFunctionArn}` with the `IndexFaceFunctionArn` from the AWS CloudFormation output.
+   *   Replace the `{replace-with_ThumbnailFunctionArn}` with the `ThumbnailFunctionArn` from the AWS CloudFormation output. 
 
-	```JSON
-    ,
+	```json
     "ParallelProcessing": {
       "Type": "Parallel",
       "Branches": [
@@ -390,7 +381,7 @@ The ARNs of the two AWS Lambda functions that performs face index and generate t
           "States": {
             "AddFaceToIndex": {
               "Type": "Task",
-              "Resource": "REPLACE_WITH_IndexFaceFunctionArn",
+              "Resource": "{replace-with_IndexFaceFunctionArn}",
               "End": true
             }
           }
@@ -400,7 +391,7 @@ The ARNs of the two AWS Lambda functions that performs face index and generate t
           "States": {
             "Thumbnail": {
               "Type": "Task",
-              "Resource": "REPLACE_WITH_ThumbnailFunctionArn",
+              "Resource": "{replace-with_ThumbnailFunctionArn}",
               "End": true
             }
           }
@@ -410,22 +401,20 @@ The ARNs of the two AWS Lambda functions that performs face index and generate t
       "End": true
     }
 	```
-	
+
 1. Find the line in the `CheckFaceDuplicate` state that marks it as the End state of the state machine.
 
-	```JSON
-	     	 "End": true,
-
+	```json
+	"End": true,
 	```
 	and replace it with
 	
-	```JSON
-      		"Next": "ParallelProcessing",
-
+	```json
+	"Next": "ParallelProcessing",
 	```
 	This tells AWS Step Functions if the  `CheckFaceDuplicate ` state runs successfully, go on to run the `ParallelProcessing ` state as the next step in the process. 
 
-1. At this point, your `rider-photo-state-machine.json` file should look like this (the AWS Lambda ARNs are examples): 
+1. At this point, your `rider-photo-state-machine.json` file should look like this (**the AWS Lambda ARNs are examples**): 
 	
 	<details>
 	<summary><strong>(expand to see)</strong></summary><p>
@@ -512,21 +501,21 @@ The ARNs of the two AWS Lambda functions that performs face index and generate t
 	```JSON
 	{
 	  "userId": "user_a",
-	  "s3Bucket": "REPLACE_WITH_YOUR_BUCKET_NAME",
+	  "s3Bucket": "{replace-with-your-bucket-name}",
 	  "s3Key": "1_happy_face.jpg"
 	} 
 	```
 
-1. If last step succeeds, you can use the AWS CLI to check the list of faces indexed in your Rekognition collection (replace the `REPLACE_WITH_YOUR_CHOSEN_AWS_REGION` portion with the region string of your chosen region):
+1. If last step succeeds, you can use the AWS CLI to check the list of faces indexed in your Rekognition collection (replace the `{aws-region}` portion with the region string of your chosen region):
 
 	```
-	aws rekognition list-faces --collection-id rider-photos --region REPLACE_WITH_YOUR_CHOSEN_AWS_REGION
+	aws rekognition list-faces --collection-id rider-photos --region {aws-region}
 	```
 	
-	> You might find the `delete-faces` command useful when testing:
+	> You might find the `delete-faces` command useful while testing:
 
 	```
-	aws rekognition delete-faces --collection-id rider-photos --face-ids REPLACE_WITH_ID_OF_FACE_TO_DELETE --region REPLACE_WITH_YOUR_CHOSEN_AWS_REGION
+	aws rekognition delete-faces --collection-id rider-photos --face-ids {face-id-to-delete} --region {aws-region}
 	```
 
 1. You can also use the Amazon S3 Console to check the Amazon S3 bucket created by AWS CloudFormation to store the resized thumbnail images. You should find resized thumbnail images in the bucket.
@@ -554,30 +543,26 @@ The ARN of the AWS Lambda function that persists the metadata can be found in th
  
    First, add a new state `PersistMetadata` following the `ParallelProcessing` state. Also make sure:
    
-   *   Replace the `REPLACE_WITH_PersistMetadataFunctionArn` with the `PersistMetadataFunctionArn ` from the AWS CloudFormation output
+   * Replace the `{replace-with_PersistMetadataFunctionArn}` with the `PersistMetadataFunctionArn` from the AWS CloudFormation output
 
-	```JSON
-	    ,
+	```json
 	    "PersistMetadata": {
 	      "Type": "Task",
-	      "Resource": "REPLACE_WITH_PersistMetadataFunctionArn",
+	      "Resource": "{replace-with_PersistMetadataFunctionArn}",
 	      "ResultPath": null,
 	      "End": true
 	    }
-
 	```
 
 1. Find the line in the `ParallelProcessing` state that marks it as the End state of the state machine.
 
-	```JSON
-	     	 "End": true
-
+	```json
+			"End": true
 	```
 	and replace it with
 	
-	```JSON
-      		"Next": "PersistMetadata"
-
+	```json
+			"Next": "PersistMetadata"
 	```
 	> **Note**: be careful to edit the `"End"` line at the `ParallelProcessing` level, not the individual branch level within the parallel state. 
 	
@@ -675,7 +660,7 @@ The ARN of the AWS Lambda function that persists the metadata can be found in th
 	```JSON
 	{
 	  "userId": "user_a",
-	  "s3Bucket": "REPLACE_WITH_YOUR_BUCKET_NAME",
+	  "s3Bucket": "{replace-with-your-bucket}",
 	  "s3Key": "1_happy_face.jpg"
 	} 
 	```
@@ -697,7 +682,7 @@ The ARN of the AWS Lambda function that persists the metadata can be found in th
 	```JSON
 	{
 	  "userId": "user_b",
-	  "s3Bucket": "REPLACE_WITH_YOUR_BUCKET_NAME",
+	  "s3Bucket": "{replace-with-your-bucket}",
 	  "s3Key": "2_sunglass_face.jpg"
 	} 
 	```
@@ -707,7 +692,7 @@ The ARN of the AWS Lambda function that persists the metadata can be found in th
 	```JSON
 	{
 	  "userId": "user_c",
-	  "s3Bucket": "REPLACE_WITH_YOUR_BUCKET_NAME",
+	  "s3Bucket": "{replace-with-your-bucket}",
 	  "s3Key": "3_multiple_faces.jpg"
 	} 
 	```
@@ -717,7 +702,7 @@ The ARN of the AWS Lambda function that persists the metadata can be found in th
 	```JSON
 	{
 	  "userId": "user_d",
-	  "s3Bucket": "REPLACE_WITH_YOUR_BUCKET_NAME",
+	  "s3Bucket": "{replace-with-your-bucket}",
 	  "s3Key": "4_no_face.jpg"
 	} 
 	```
@@ -731,52 +716,3 @@ The ARN of the AWS Lambda function that persists the metadata can be found in th
 1. Go to the Amazon S3 console, verify the thumbnail images of the photos you processed are in the thumbnail S3 Bucket. 
 
 Now you have built a multi-step image processing workflow using AWS Step Functions! The workflow can be integrated to your app by fronting it with AWS API Gateway or triggered from an Amazon S3 upload event.  
-
-## Extra credit
-The intent of the **PhotoDoesNotMeetRequirement**  step is to send notification to the user that the verification of their profile photo failed so they might try uploading a different picture. It currently uses the AWS Lambda function `NotificationPlaceholderFunction` which simply returns the message instead of actually sending the notification. Implement sending email notifications in the Lambda function using Amazon Simple Email Service (SES). 
-
-## Clean-up 
-
-1. Delete the `RiderPhotoProcessing` state machine from the AWS Step Functions console.
-
-1. Delete the `wildrydes-step-module-resources` AWS CloudFormation stack that launched the AWS Lambda functions, Amazon S3 buckets and Amazon DynamoDB table.
-
-	<details>
-	<summary><strong>Step-by-step instructions (expand for details)</strong></summary><p>
-	
-	1. In the AWS CloudFormation Management Console, select the `wildrydes-step-module-resources` stack.
-	
- 	1. Select **Delete Stack** under **Actions**.
- 	
-		![delete cloudformation stack](./images/cloudformation-delete.png)
-	
-	1. Click **Yes, Delete**
-	
-	</p></details>
-	
-1. Delete the Amazon Rekognition collection.
-
-
-	<details>
-	<summary><strong>Step-by-step instructions (expand for details)</strong></summary><p>
-	
-	1. In a terminal window, run the following command and replace the `REPLACE_WITH_YOUR_CHOSEN_AWS_REGION` portion with the AWS region you have used. 
-
-			aws rekognition delete-collection --region REPLACE_WITH_YOUR_CHOSEN_AWS_REGION --collection-id rider-photos
-	
-		For example:
-	
-			aws rekognition delete-collection --region us-east-1 --collection-id rider-photos
-			aws rekognition delete-collection --region us-west-2 --collection-id rider-photos
-			aws rekognition delete-collection --region eu-west-1 --collection-id rider-photos
-	
-	
-	2. If successful, you should get an acknowledgment from the service that looks like:
-
-		```JSON
-		{
-	    	"StatusCode": 200
-		}
-		```
-	
-	</p></details>
