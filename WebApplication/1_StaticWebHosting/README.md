@@ -65,11 +65,34 @@ Upload the website assets for this module to your S3 bucket. You can use the AWS
 
 If you already have the CLI installed and configured, you can use it to copy the necessary web assets from `s3://wildrydes-us-east-1/WebApplication/1_StaticWebHosting/website` to your bucket.
 
-Execute the following command making sure to replace `YOUR_BUCKET_NAME` with the name you used in the previous section and `YOUR_BUCKET_REGION` with the region code (e.g. us-east-2) where you created your bucket.
+Execute the following command making sure to replace `your-bucket-name` with the name you used in the previous section and `aws-region` with the region code (e.g. us-east-1) where you created your bucket.
 
-    aws s3 sync s3://wildrydes-us-east-1/WebApplication/1_StaticWebHosting/website s3://YOUR_BUCKET_NAME --region YOUR_BUCKET_REGION
+```
+aws s3 sync s3://wildrydes-us-east-1/WebApplication/1_StaticWebHosting/website s3://{your-bucket-name} --region {aws-region} --profile {your-profile-name}
+```
 
 If the command was successful, you should see a list of objects that were copied to your bucket.
+
+```
+aws s3 ls s3://{your-bucket-name}/ --region {aws-region} --profile {your-profile-name}
+
+                           PRE css/
+                           PRE fonts/
+                           PRE images/
+                           PRE js/
+2018-08-15 12:31:35       2992 apply.html
+2018-08-15 12:31:35       6540 faq.html
+2018-08-15 12:31:35       1406 favicon.ico
+2018-08-15 12:31:37       6757 index.html
+2018-08-15 12:31:37       6079 investors.html
+2018-08-15 12:31:38       2735 register.html
+2018-08-15 12:31:38       4329 ride.html
+2018-08-15 12:31:38         43 robots.txt
+2018-08-15 12:31:38       2590 signin.html
+2018-08-15 12:31:38       5047 unicorns.html
+2018-08-15 12:31:38       2595 verify.html
+```
+
 </p></details>
 
 ### 3. Add a Bucket Policy to Allow Public Reads
@@ -89,7 +112,7 @@ See [this example](http://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket
 
 1. Choose the **Permissions** tab, then choose **Bucket Policy**.
 
-1. Enter the following policy document into the bucket policy editor replacing `YOUR_BUCKET_NAME` with the name of the bucket you created in section 1:
+1. Enter the following policy document into the bucket policy editor replacing `your-bucket-name` with the name of the bucket you created in section 1:
 
     ```json
     {
@@ -99,7 +122,7 @@ See [this example](http://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket
                 "Effect": "Allow",
                 "Principal": "*",
                 "Action": "s3:GetObject",
-                "Resource": "arn:aws:s3:::YOUR_BUCKET_NAME/*"
+                "Resource": "arn:aws:s3:::{your-bucket-name}/*"
             }
         ]
     }
@@ -113,7 +136,7 @@ See [this example](http://docs.aws.amazon.com/AmazonS3/latest/dev/example-bucket
 
 ### 4. Enable Website Hosting
 
-By default objects in an S3 bucket are available via URLs with the structure `http://<Regional-S3-prefix>.amazonaws.com/<bucket-name>/<object-key>`. In order to serve assets from the root URL (e.g. /index.html), you'll need to enable website hosting on the bucket. This will make your objects available at the AWS Region-specific website endpoint of the bucket: `<bucket-name>.s3-website-<AWS-region>.amazonaws.com`
+By default objects in an S3 bucket are available via URLs with the structure `http://{regional-s3-prefix}.amazonaws.com/{your-bucket-name}/{object-key}`. In order to serve assets from the root URL (e.g. /index.html), you'll need to enable website hosting on the bucket. This will make your objects available at the AWS Region-specific website endpoint of the bucket: `{your-bucket-name}.s3-website-{aws-region}.amazonaws.com`
 
 You can also use a custom domain for your website. For example http://www.wildrydes.com is hosted on S3. Setting up a custom domain is not covered in this workshop, but you can find detailed instructions in our [documentation](http://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html).
 
