@@ -10,6 +10,8 @@ If you're new to serverless, please refer to [Serverless Computing on AWS](https
 
 To get hands dirty, we'll need to make sure to have all the environment tooling required for theses hands-labs are installed on your computer.
 
+> This workshop assumes you're using your local computer to walk-through hands-on labs. If you prefer you can [spin up your own IDE in the cloud, using AWS Cloud9](DevOps/0_Cloud9). And **skip this warm-up section**.
+
 1. Install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/installing.html)
 
     - [macOS Instructions](https://docs.aws.amazon.com/cli/latest/userguide/cli-install-macos.html)
@@ -47,7 +49,7 @@ To get hands dirty, we'll need to make sure to have all the environment tooling 
 
 3. With [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/) installed, open your terminal of choice and type `aws configure --profile {a new profile name besides default}`
 
-![AWS CLI Profile creation](images/cli-configure.png)
+    ![AWS CLI Profile creation](images/cli-configure.png)
 
 4. Add the Access Key generated from IAM. This would be something like `AKIAJ72VFA7DKQ462Y6Q`, for example.
 
