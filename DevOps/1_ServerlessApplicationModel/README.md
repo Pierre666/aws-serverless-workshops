@@ -78,155 +78,15 @@ Each of the following sections provide an implementation overview and detailed, 
 
 If you're using the latest version of the Chrome, Firefox, or Safari web browsers the step-by-step instructions won't be visible until you expand the section.
 
-
-### 1. Seed the `uni-api` CodeCommit Git repository
-
-1. Each module has corresponding source code used to seed the CodeCommit Git repository for the CodeStart project.  To seed the CodeCommit Git repository, click on the **Launch Stack** button for your region below:
-
-    Region| Launch
-    ------|-----
-    US East (N. Virginia) | [![Launch Module 1 in us-east-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=Seed-1-ServerlessApplicationModel&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-us-east-1/codecommit-template.yml&param_sourceUrl=https://s3.amazonaws.com/fsd-aws-wildrydes-us-east-1/uni-api-1-v2.zip&param_targetRepositoryName=uni-api&param_targetRepositoryRegion=us-east-1)
-    US West (N. California) | [![Launch Module 1 in us-west-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-1#/stacks/create/review?stackName=Seed-1-ServerlessApplicationModel&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-us-west-1/codecommit-template.yml&param_sourceUrl=https://s3-us-west-1.amazonaws.com/fsd-aws-wildrydes-us-west-1/uni-api-1-v2.zip&param_targetRepositoryName=uni-api&param_targetRepositoryRegion=us-west-1)
-    US West (Oregon) | [![Launch Module 1 in us-west-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/create/review?stackName=Seed-1-ServerlessApplicationModel&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-us-west-2/codecommit-template.yml&param_sourceUrl=https://s3-us-west-2.amazonaws.com/fsd-aws-wildrydes-us-west-2/uni-api-1-v2.zip&param_targetRepositoryName=uni-api&param_targetRepositoryRegion=us-west-2)
-    EU (Ireland) | [![Launch Module 1 in eu-west-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/create/review?stackName=Seed-1-ServerlessApplicationModel&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-eu-west-1/codecommit-template.yml&param_sourceUrl=https://s3-eu-west-1.amazonaws.com/fsd-aws-wildrydes-eu-west-1/uni-api-1-v2.zip&param_targetRepositoryName=uni-api&param_targetRepositoryRegion=eu-west-1)
-    EU (Frankfurt) | [![Launch Module 1 in eu-central-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/create/review?stackName=Seed-1-ServerlessApplicationModel&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-eu-central-1/codecommit-template.yml&param_sourceUrl=https://s3-eu-central-1.amazonaws.com/fsd-aws-wildrydes-eu-central-1/uni-api-1-v2.zip&param_targetRepositoryName=uni-api&param_targetRepositoryRegion=eu-central-1)
-    Asia Pacific (Sydney) | [![Launch Module 1 in ap-southeast-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/create/review?stackName=Seed-1-ServerlessApplicationModel&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-ap-southeast-2/codecommit-template.yml&param_sourceUrl=https://s3-ap-southeast-2.amazonaws.com/fsd-aws-wildrydes-ap-southeast-2/uni-api-1-v2.zip&param_targetRepositoryName=uni-api&param_targetRepositoryRegion=ap-southeast-2)
-
-
-1. The CloudFormation template has been prepopulated with the necessary fields for this module.  No changes are necessary
-
-1. Select the **I acknowledge that AWS CloudFormation might create IAM resources.** checkbox to grant CloudFormation permission to create IAM resources on your behalf
-
-1. Click the **Create** button in the lower right corner of the browser window to create the CloudFormation stack and seed the CodeCommit repository.
-
-    ![Seed Repository CloudFormation Stack Review](images/seed-repository-1.png)
-
-1. There will be a short delay as the Git repository is seeded with the new source code.  Upon successful completion, the CloudFormation will show Status ``CREATE_COMPLETE``.
-
-    ![CloudFormation Stack Creation Complete](images/seed-repository-2.png)
-
-### 2. Fetch CodeCommit Git Repository
-
-Now that the CodeCommit Git repository has been seeded with new source code, you will need to fetch the changes locally so that you may modify the code.  Typically, this is accomplished using the `git pull` command, however for the workshop we have replaced the repository with a new history and different Git commands will be used.
-
-Using your preferred Git client, run the commands on your local `uni-api` Git repository:
-
-```bash
-git fetch --all
-git reset --hard origin/master
-```
-
-
 ## SAM Local
 
-[SAM Local](http://docs.aws.amazon.com/lambda/latest/dg/test-sam-local.html) is the AWS CLI tool for managing Serverless applications written with [Serverless Application Model (SAM)](https://github.com/awslabs/serverless-application-model).  SAM Local can be used to test functions locally, start a local API Gateway from a SAM template, validate a SAM template, and generate sample payloads for various event sources.  
+[SAM Local](http://docs.aws.amazon.com/lambda/latest/dg/test-sam-local.html) is the AWS CLI tool for managing Serverless applications written with [Serverless Application Model (SAM)](https://github.com/awslabs/serverless-application-model). SAM Local can be used to test functions locally, start a local API Gateway from a SAM template, validate a SAM template, and generate sample payloads for various event sources.  
 
 ### Installation
 
 To complete this module, you will need to install SAM Local.  If you already have SAM Local installed, you can skip this section.
 
-#### Prerequisites
-
-Running Serverless projects and functions locally with SAM Local requires Docker to be installed and running. SAM Local will use the `DOCKER_HOST` environment variable to contact the docker daemon.
-
- - macOS: [Docker for Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac)
- - Windows: [Docker Toolbox](https://download.docker.com/win/stable/DockerToolbox.exe)
- - Linux: Check your distro's package manager (e.g. yum install docker)
-
-For macOS and Windows users: SAM local requires that the project directory (or any parent directory) is listed in Docker file sharing options.
-
-Verify that docker is working, and that you can run docker commands from the CLI (e.g. `docker ps`). You do not need to install/fetch/pull any containers - SAM Local will do it automatically as required.
-
-
-#### Windows, Linux, macOS with NPM [Recommended]
-
-The easiest way to install **`sam`** is to use [NPM](https://www.npmjs.com).
-
-```bash
-npm install -g aws-sam-local
-```
-
-If you get a permission error when using npm (such as `EACCES: permission denied`), please see the instructions on this page of the NPM documentation: [https://docs.npmjs.com/getting-started/fixing-npm-permissions](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
-
-Verify the installation worked:
-```bash
-sam --version
-```
-
-#### Binary release
-
-We also release the CLI as binaries that you can download and instantly use. You can find them under [Releases](https://github.com/awslabs/aws-sam-local/releases) in the SAM Local repo.
-
-
-#### Alternative Installation: Amazon Linux (EC2)
-
-If you're unable to install SAM Local on your workstation, you may find it easier to use SAM Local on an Amazon Linux EC2 instance.   In this case, you will not be performing work locally on your laptop, instead you will connect remotely into an EC2 instance to perform editing and testing.
-
-1. [Create a keypair](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html), if you do not have one already.
-
-1. To launch an EC2 instance with the required dependencies, click on the **Launch Stack** button for your region below.  You will need to select the keypair that you created in the previous step, as well as a VPC and Subnet for your EC2 instance:
-
-    Region| Launch
-    ------|-----
-    US East (N. Virginia) | [![Launch Dev Instance in us-east-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create/review?stackName=DeveloperInstance&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-us-east-1/developer-instance.yml)
-    US West (N. California) | [![Launch Dev Instance in us-west-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-1#/stacks/create/review?stackName=DeveloperInstance&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-us-west-1/developer-instance.yml)
-    US West (Oregon) | [![Launch Dev Instance in us-west-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=us-west-2#/stacks/create/review?stackName=DeveloperInstance&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-us-west-2/developer-instance.yml)
-    EU (Ireland) | [![Launch Dev Instance in eu-west-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-west-1#/stacks/create/review?stackName=DeveloperInstance&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-eu-west-1/developer-instance.yml)
-    EU (Frankfurt) | [![Launch Dev Instance in eu-central-1](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=eu-central-1#/stacks/create/review?stackName=DeveloperInstance&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-eu-central-1/developer-instance.yml)
-    Asia Pacific (Sydney) | [![Launch Dev Instance in ap-southeast-2](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/images/cloudformation-launch-stack-button.png)](https://console.aws.amazon.com/cloudformation/home?region=ap-southeast-2#/stacks/create/review?stackName=DeveloperInstance&templateURL=https://s3.amazonaws.com/fsd-aws-wildrydes-ap-southeast-2/developer-instance.yml)
-
-
-1. Once the CloudFormation stack creation has completed, find the EC2 instance public DNS name by selecting the checkbox to the left of the **DeveloperInstance** Stack, and clicking the **Outputs** tab below the list of Stacks.  Find the output key labeled `PublicDnsName` and use the corresponding value in order to access the EC2 instance.
- 
-1. Use SSH client to connect to the instance.  If you are using Windows, use a client such as Putty or Bitvise (you can find instructions for connecting from Windows using Putty here: [Connecting to Your Linux Instance from Windows Using PuTTY](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/putty.html))
-
-1. The Git repository has been cloned to the home directory on launch, `/home/ec2-user/uni-api`.
-
-###### Setup Port Forwarding Configuration
-
-SAM Local can start an HTTP server locally on EC2 instance on port 3000.  In order to view content on that HTTP server through the browser on your laptop, you need to configure port forwarding.
-
-###### Port Forwarding on MacOS
-
-On your workstation, open a new terminal and run the following command.  In the command, replace ***~/mykeypair.pem*** with the location and file name of your .pem file and replace ***ec2-###-##-##-###.compute-1.amazonaws.com*** with the public DNS name of your EC2 developer instance:
-
-   ```
-   ssh -i ~/mykeypair.pem -N -L 3000:ec2-###-##-##-###.compute-1.amazonaws.com:3000 ec2-user@ec2-###-##-##-###.compute-1.amazonaws.com
-   ```
-
-###### Port Forwarding with Putty on Windows
-
-1. In your putty configuration, select **Connection** , **SSH** , **Tunnels** and add a mapping:
-
-   ```
-   Source port: 3000
-   
-   Destination: 127.0.0.1:3000
-   ```
-
-   The configuration should look like this:
-
-   ![Putty Tunnel Config](images/putty-tunnel-config.png)
-
-
-###### Port Forwarding with Bitvise SSH Client on Windows
-
-1. In **Profile** window, select **C2S** tab, create an entry with this configuration:
-
-   ```
-   Listen Interface: 127.0.0.1
-   
-   List. Port: 3000
-   
-   Destination Host: localhost
-   
-   Dest. Port: 3000
-   ```
-
-   C2S configuration should look similar to this:
-
-   ![Bitvise Tunnel Config](images/bitvise-tunnel-config.png)
-
+> Please refer to the [Warm-up section](../../README.md) or the [detailed installation instructions](https://github.com/awslabs/aws-sam-cli/blob/develop/docs/installation.rst) at [aws-sam-cli upstream repo](https://github.com/awslabs/aws-sam-cli/)
 
 ## SAM Local Development
 
@@ -234,19 +94,19 @@ In this section, you will use SAM Local on your workstation to run the Unicorn A
 
 ### Run API Gateway locally
 
-1. From the **`uni-api`** directory, run the following command:
+1. From the `uni-api` directory, run the following command:
 
    ```bash
    sam local start-api
    ```
-   
+
    If port forwarding from an EC2 developer instance, run the following command:
 
    ```bash
    sam local start-api --host 0.0.0.0
    ```
 
-   This will spawn a local API Gateway to test HTTP request/response functionality. Features hot-reloading to allow you to quickly develop, and iterate over your functions.  **`sam`** will automatically find any functions within your SAM template that have `Api` event sources defined, and mount them at the defined HTTP paths.
+   This will spawn a local API Gateway to test HTTP request/response functionality. Features hot-reloading to allow you to quickly develop, and iterate over your functions. `sam` will automatically find any functions within your SAM template that have `Api` event sources defined, and mount them at the defined HTTP paths.
 
    If this is your first time running SAM Local, there will be a delay as the Docker images are downloaded.  Once successful, you should see output similar to the screenshot below:
 
@@ -254,7 +114,7 @@ In this section, you will use SAM Local on your workstation to run the Unicorn A
 
 1. Open a browser and enter `http://127.0.0.1:3000/unicorns` in the address bar.  Confirm that you see the output below:
 
-   ![Hello World in Browser](images/browser-hello-world.png)
+   ![Hello Chile in Browser](images/browser-hello-chile.png)
 
 Congratulations!  You have successfully used SAM Local to start a local development environment.  Keep the window open that is running the `sam local start-api` command until this module is complete.
 
@@ -281,10 +141,12 @@ HOW TO update code and verify results (expand for details)
 
 Congratulations!  You've successfully test changes to a Lambda function in a local development environment.  You may now kill the SAM Local running process.
 
-To learn more about development with SAM Local, check out [AWS Documentation](http://docs.aws.amazon.com/lambda/latest/dg/test-sam-local.html) and SAM Local [GitHub repository](https://github.com/awslabs/aws-sam-local).  
+To learn more about development with SAM Local, check out [AWS Documentation](http://docs.aws.amazon.com/lambda/latest/dg/test-sam-local.html) and SAM Local [GitHub repository](https://github.com/awslabs/aws-sam-cli).  
 
 ## Completion
 
-You have successfully performed local development and testing of a RESTful serverless API using the Serverless Application Model.  Please close the window running the `sam local start-api` command before preceding to the next module.
+You have successfully performed local development and testing of a RESTful serverless API using the Serverless Application Model.  You can now close the window running the `sam local start-api` command.
 
-In the next [Continuous Delivery Pipeline Module](../2_ContinuousDeliveryPipeline), you will learn how to setup deployment of that API into AWS and to automate this deployment process using AWS CodePipeline and AWS CodeBuild.
+Please [take some time exploring these examples](https://github.com/awslabs/serverless-application-model/tree/master/examples/apps) and visit [AWS Serverless Application Repository](https://serverlessrepo.aws.amazon.com/applications)
+
+Thanks!
